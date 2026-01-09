@@ -1,0 +1,43 @@
+services:
+  web:
+    build: .
+    container_name: web_api
+    command: gunicorn project.wsgi:application --bind 0.0.0.0:14050 --workers 4 --timeout 120 --graceful-timeout 120 --keep-alive 5 --log-level info --access-logfile - --error-logfile -
+    ports:
+      - "14050:14050"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.settings
+
+  worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A project worker --loglevel=info
+    ports:
+      - "14051:14051"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=project.settings
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

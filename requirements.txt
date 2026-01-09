@@ -1,0 +1,38 @@
+# Core Django
+Django
+djangorestframework
+djangorestframework_simplejwt
+
+# Authentication & Authorization
+dj-rest-auth
+django-allauth
+PyJWT
+google-auth
+django-oauth-toolkit
+
+# Django Extensions
+django-cors-headers
+django-filter
+
+# Background Tasks
+celery
+redis
+
+# Database
+psycopg2-binary
+
+# Configuration
+python-decouple
+python-dotenv
+
+# Server
+gunicorn
+whitenoise
+
+# Security
+cryptography
+
+# Utilities
+jsonschema
+requests
+Pillow
