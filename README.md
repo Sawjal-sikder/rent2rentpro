@@ -1,15 +1,15 @@
-# Violet Backend
+# Rent2Rent Pro Backend
 
-Django REST API backend for the Violet application - an AI-powered chat platform with user authentication, document management, and prompt template features. Built with Celery task processing and Docker support.
+Django REST API backend for the Rent2Rent Pro application - a property rental management platform with user authentication and administrative features. Built with Celery task processing and Docker support.
 
 ## Features
 
-- **AI Chat System** - Real-time chat sessions with AI assistants, conversation history management
-- **User Authentication** - JWT-based auth with email verification, password reset, and social login (Google)
-- **Document Management** - Upload and manage documents
-- **Prompt Templates** - Customizable AI prompt templates with icons
-- **Background Tasks** - Celery-powered async task processing
-- **Docker Ready** - Full containerization with Docker Compose
+- **User Authentication** - JWT-based authentication with email verification, password reset, and social login (Google)
+- **Account Management** - User registration, profile management, and account administration
+- **Admin Dashboard** - Administrative interface for user and system management
+- **Background Tasks** - Celery-powered async task processing for scalable operations
+- **Docker Ready** - Full containerization with Docker Compose for easy deployment
+- **RESTful API** - Well-structured API endpoints for frontend integration
 
 ## Table of Contents
 
@@ -24,6 +24,7 @@ Django REST API backend for the Violet application - an AI-powered chat platform
 - [Database Management](#database-management)
 - [Common Commands](#common-commands)
 - [Project Structure](#project-structure)
+- [Development Workflow](#development-workflow)
 - [Troubleshooting](#troubleshooting)
 
 ## Tech Stack
@@ -57,8 +58,8 @@ Django REST API backend for the Violet application - an AI-powered chat platform
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/Sawjal-sikder/violet_backend.git
-   cd violet_backend
+   git clone https://github.com/Sawjal-sikder/rent2rentpro.git
+   cd rent2rentpro/rent2rent_backend
    ```
 
 2. **Create environment file**
@@ -98,8 +99,8 @@ Django REST API backend for the Violet application - an AI-powered chat platform
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/Sawjal-sikder/violet_backend.git
-   cd violet_backend
+   git clone https://github.com/Sawjal-sikder/rent2rentpro.git
+   cd rent2rentpro/rent2rent_backend
    ```
 
 2. **Create and activate virtual environment**
@@ -159,7 +160,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 # DATABASE_URL=postgresql://user:password@localhost:5432/dbname
 
 # Redis
-REDIS_URL=redis://localhost:6380
+REDIS_URL=redis://localhost:6379
 
 # Email Configuration
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
@@ -174,8 +175,8 @@ GOOGLE_OAUTH_CLIENT_ID=your-google-client-id
 GOOGLE_OAUTH_CLIENT_SECRET=your-google-client-secret
 
 # Celery
-CELERY_BROKER_URL=redis://localhost:6380/0
-CELERY_RESULT_BACKEND=redis://localhost:6380/0
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
 ```
 
 ## Running the Project
@@ -210,7 +211,7 @@ CELERY_RESULT_BACKEND=redis://localhost:6380/0
 1. **Start Redis server** (in a separate terminal)
 
    ```bash
-   redis-server --port 6380
+   redis-server --port 6379
    ```
 
 2. **Start Django development server**
@@ -219,7 +220,7 @@ CELERY_RESULT_BACKEND=redis://localhost:6380/0
    python manage.py runserver
    ```
 
-   The API will be available at http://localhost:14040 (Docker) or http://localhost:8000 (local)
+   The API will be available at http://localhost:14050 (Docker) or http://localhost:8000 (local)
 
 3. **Start Celery worker** (in a separate terminal)
 
@@ -428,19 +429,25 @@ docker compose down -v
 ## Project Structure
 
 ```
-violet_backend/
+rent2rent_backend/
 ├── accounts/              # User authentication and account management
 │   ├── models.py         # Custom user model, password reset codes
-│   ├── views.py          # Authentication views (register, login, social auth)
-│   ├── serializers.py    # API serializers
+│   ├── views/            # Authentication views (register, login, social auth)
+│   │   ├── user_login.py
+│   │   └── user_registration.py
+│   ├── serializers/      # API serializers
+│   │   ├── user_login.py
+│   │   └── user_registration.py
 │   ├── urls.py           # URL routing
-│   ├── social_auth.py    # Google OAuth integration
-│   └── management/       # Custom management commands
-├── services/             # Core AI chat and content services
-│   ├── models.py         # ChatSession, ChatMessage, PromptTemplate, Document
-│   ├── views.py          # Chat and document management views
-│   ├── serializers.py    # API serializers
-│   └── urls.py           # URL routing
+│   ├── admin.py          # Admin interface configuration
+│   └── migrations/       # Database migrations
+├── dashboard/            # Admin dashboard functionality
+│   ├── models.py         # Dashboard-related models
+│   ├── views.py          # Dashboard views
+│   └── admin.py          # Admin configurations
+├── service/              # Additional services and utilities
+│   ├── models.py         # Service-related models
+│   └── views.py          # Service endpoints
 ├── project/              # Project configuration
 │   ├── settings.py       # Django settings
 │   ├── urls.py           # Root URL configuration
@@ -450,7 +457,7 @@ violet_backend/
 │   ├── documents/        # Uploaded documents
 │   ├── dxf/              # DXF files
 │   ├── profile_images/   # User profile images
-│   └── prompt_icons/     # Prompt template icons
+│   └── prompt_icons/     # Template icons
 ├── staticfiles/          # Collected static files
 ├── docker-compose.yml    # Docker Compose configuration
 ├── Dockerfile            # Docker build instructions
@@ -492,35 +499,19 @@ violet_backend/
 | GET    | `/auth/admin/`               | List admins                  |
 | POST   | `/auth/admin/create/`        | Create superuser             |
 
-### Chat & AI Services (`/api/services/`)
+### Dashboard (`/api/dashboard/`)
 
-| Method | Endpoint                      | Description                    |
-| ------ | ----------------------------- | ------------------------------ |
-| POST   | `/chat/`                      | Send chat message to AI        |
-| GET    | `/chat/sessions/`             | List user's chat sessions      |
-| GET    | `/chat/sessions/<id>/`        | Get chat session with messages |
-| DELETE | `/chat/sessions/<id>/delete/` | Delete chat session            |
+| Method | Endpoint            | Description             |
+| ------ | ------------------- | ----------------------- |
+| GET    | `/dashboard/`       | Get dashboard overview  |
+| GET    | `/dashboard/stats/` | Get platform statistics |
 
-### Prompt Templates (`/api/services/`)
+### Services (`/api/service/`)
 
-| Method | Endpoint                  | Description                   |
-| ------ | ------------------------- | ----------------------------- |
-| GET    | `/prompt-templates/`      | List all prompt templates     |
-| POST   | `/prompt-templates/`      | Create prompt template        |
-| GET    | `/prompt-templates/<id>/` | Get prompt template details   |
-| PUT    | `/prompt-templates/<id>/` | Update prompt template        |
-| DELETE | `/prompt-templates/<id>/` | Delete prompt template        |
-| POST   | `/prompt-templates/ai/`   | AI-assisted prompt generation |
-
-### Documents (`/api/services/`)
-
-| Method | Endpoint           | Description          |
-| ------ | ------------------ | -------------------- |
-| GET    | `/documents/`      | List all documents   |
-| POST   | `/documents/`      | Upload document      |
-| GET    | `/documents/<id>/` | Get document details |
-| PUT    | `/documents/<id>/` | Update document      |
-| DELETE | `/documents/<id>/` | Delete document      |
+| Method | Endpoint           | Description        |
+| ------ | ------------------ | ------------------ |
+| GET    | `/service/`        | Get service status |
+| POST   | `/service/health/` | Health check       |
 
 ## Troubleshooting
 
@@ -531,10 +522,10 @@ violet_backend/
 ```bash
 # Check what's using the port
 # Windows
-netstat -ano | findstr :14040
+netstat -ano | findstr :14050
 
 # Linux/macOS
-lsof -i :14040
+lsof -i :14050
 
 # Change port in docker-compose.yml or stop the conflicting service
 ```
@@ -653,4 +644,4 @@ MIT License
 
 ## Support
 
-For support, open an issue in the [GitHub repository](https://github.com/Sawjal-sikder/violet_backend/issues).
+For support, open an issue in the [GitHub repository](https://github.com/Sawjal-sikder/rent2rentpro/issues).
