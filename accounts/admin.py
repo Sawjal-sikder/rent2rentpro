@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, PasswordResetCode
 
 
 @admin.register(CustomUser)
@@ -29,3 +29,12 @@ class CustomUserAdmin(UserAdmin):
     )
     
     filter_horizontal = ('groups', 'user_permissions')
+
+
+@admin.register(PasswordResetCode)
+class PasswordResetCodeAdmin(admin.ModelAdmin):
+    model = PasswordResetCode
+    list_display = ['user', 'code', 'is_used', 'is_verified', 'created_at']
+    list_filter = ['is_used', 'is_verified', 'created_at']
+    search_fields = ['user__email', 'code']
+    ordering = ['-created_at']

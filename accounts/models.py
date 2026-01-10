@@ -81,8 +81,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class PasswordResetCode(models.Model):
     user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
     code = models.CharField(max_length=6)
-    created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "user_auth_passwordresetcode"
