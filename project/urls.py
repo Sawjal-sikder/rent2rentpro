@@ -9,6 +9,7 @@ from django.http import JsonResponse # type: ignore
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/auth/', include('accounts.urls')),
+    path('api/v1/user/', include('user_profile.urls')),
     path('accounts/', include('allauth.urls')),
     path('', lambda request: JsonResponse({
         "status": "success",

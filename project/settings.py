@@ -39,6 +39,7 @@ INSTALLED_APPS = [
      'rest_framework.authtoken',
     # for app
     'accounts.apps.AuthConfig',
+    'user_profile',
     'dashboard',
     'service',
        
