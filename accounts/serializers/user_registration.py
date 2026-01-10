@@ -12,44 +12,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'full_name', 'phone_number', 'password', 'profile_image']
 
-    def validate_email(self, value):
-        # Check if user with this email already exists
-        if User.objects.filter(email=value).exists():
-            existing_user = User.objects.get(email=value)
-            
-            # If user exists but is inactive, we'll resend activation code
-            if not existing_user.is_active:
-                # Delete old activation codes for this user
-                PasswordResetCode.objects.filter(user=existing_user, is_used=False).delete()
-                
-                # Generate new activation code
-                activation_code = PasswordResetCode.objects.create(user=existing_user)
-                
-                # Send activation email again
-                Celery_send_mail.delay(
-                    email=existing_user.email,
-                    subject="Activation of your new account!",
-                    message=(
-                        f"Hello {existing_user.full_name},\n\n"
-                        f"You requested a new activation code for your account.\n\n"
-                        f"Please activate your account using the code below:\n"
-                        f"Your activation code: {activation_code.code}\n\n"
-                        f"This code will expire in 2 minutes.\n\n"
-                        f"Best regards,\n"
-                        f"Support Team"
-                    )
-                )
-                
-                # Set a flag to indicate we're resending activation
-                self.context['resend_activation'] = True
-                self.context['existing_user'] = existing_user
-                return value
-            else:
-                # If user is already active, raise validation error
-                raise serializers.ValidationError("User with this email already exists and is active.")
-        
-        return value
-
     def create(self, validated_data):
         # Check if we're resending activation for existing user
         if self.context.get('resend_activation'):
@@ -64,9 +26,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         
         # Generate activation code
         activation_code = PasswordResetCode.objects.create(user=user)
-        
-        
-        
+                
         # Send welcome email asynchronously
         Celery_send_mail.delay(
             email = user.email,
@@ -80,7 +40,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 f"Best regards,\n"
                 f"Support Team"
             )
-        )
-        
+        )      
         
         return user
