@@ -10,7 +10,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'full_name', 'phone_number', 'password', 'profile_image']
+        fields = ['user_type','email', 'full_name', 'phone_number', 'password', 'profile_image']
 
     def create(self, validated_data):
         # Check if we're resending activation for existing user

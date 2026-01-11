@@ -43,6 +43,10 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    user_type_choices = (
+        ('individuals', 'individuals'),
+        ('company', 'company'),
+    )
     email = models.EmailField(unique=True, db_index=True)
     full_name = models.CharField(max_length=150)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
@@ -51,6 +55,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True
     )
+    user_type = models.CharField(max_length=20, choices=user_type_choices, default='individuals')
+    address = models.TextField(blank=True, null=True)
+    company_name = models.CharField(max_length=150, blank=True, null=True)
+    company_address = models.TextField(blank=True, null=True)
+    company_vat_number = models.CharField(max_length=50, blank=True, null=True)
+    
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
