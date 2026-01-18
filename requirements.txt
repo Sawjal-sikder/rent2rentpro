@@ -36,3 +36,4 @@ cryptography
 jsonschema
 requests
 Pillow
+reportlab
