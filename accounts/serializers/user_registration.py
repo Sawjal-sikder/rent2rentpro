@@ -2,15 +2,33 @@ from rest_framework import serializers #type: ignore
 from accounts.mail_send import Celery_send_mail  # type: ignore
 from django.contrib.auth import get_user_model # type: ignore
 from ..models import PasswordResetCode
+from ..utils_generate_otp import generate_otp
 
 User = get_user_model()
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    email = serializers.EmailField(required=True)  # Override to remove unique validator
 
     class Meta:
         model = User
         fields = ['user_type','email', 'full_name', 'phone_number', 'password', 'profile_image']
+        
+    def validate_email(self, value):
+        user = User.objects.filter(email=value).first()
+        if user:
+            if not user.is_active:
+                generate_otp(user)
+                raise serializers.ValidationError({
+                    "message": "This email is already registered but not activated. A new activation code has been sent to your email.",
+                    "status": "resend_activation"
+                })
+            else:
+                raise serializers.ValidationError({
+                    "message": "A user with this email already exists. Please login. If you forgot your password, use the forgot password option.",
+                    "status": "user_exists"
+                })
+        return value
 
     def create(self, validated_data):
         # Check if we're resending activation for existing user
@@ -25,21 +43,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.save()
         
         # Generate activation code
-        activation_code = PasswordResetCode.objects.create(user=user)
-                
-        # Send welcome email asynchronously
-        Celery_send_mail.delay(
-            email = user.email,
-            subject = "Activation of your new account!",
-            message = (
-                f"Hello {user.full_name},\n\n"
-                f"Welcome! Your account has been successfully created.\n\n"
-                f"Please activate your account and log into your account:\n"
-                f"Your activation code: {activation_code.code}\n\n"
-                f"We're excited to have you on board. If you have any questions or need assistance, feel free to reach out to our support team.\n\n"
-                f"Best regards,\n"
-                f"Support Team"
-            )
-        )      
+        generate_otp(user) 
         
         return user
