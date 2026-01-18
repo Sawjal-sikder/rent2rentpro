@@ -12,9 +12,8 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
-    # 'jazzmin',
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -22,28 +21,35 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'rest_framework_simplejwt.token_blacklist',
-    'rest_framework_simplejwt',
+
+    # Custom user app - MUST come before allauth
+    'accounts',
+
+    # Third-party
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'corsheaders',
+
     # Allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.apple',
+
     # dj-rest-auth
     'dj_rest_auth',
     'dj_rest_auth.registration',
-     'rest_framework.authtoken',
-    # for app
-    'accounts.apps.AuthConfig',
+
+    # other apps
     'user_profile',
     'dashboard',
     'service',
-       
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

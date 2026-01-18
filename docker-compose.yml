@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    container_name: web_api
+    container_name: rent_web
     command: gunicorn project.wsgi:application --bind 0.0.0.0:14050 --workers 4 --timeout 120 --graceful-timeout 120 --keep-alive 5 --log-level info --access-logfile - --error-logfile -
     ports:
       - "14050:14050"
@@ -17,10 +17,10 @@ services:
 
   worker:
     build: .
-    container_name: celery_worker
+    container_name: rent_celery_worker
     command: celery -A project worker --loglevel=info
     ports:
-      - "14051:14051"
+      - "6350:6350"
     depends_on:
       redis:
         condition: service_healthy
@@ -33,11 +33,12 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: redis
+    container_name: rent_redis
+    command: redis-server --port 14051
     ports:
-      - "6379:6379"
+      - "14051:14051"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-p", "14051", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
