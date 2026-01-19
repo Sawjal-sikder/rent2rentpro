@@ -1,9 +1,9 @@
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer
-)
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.enums import TA_CENTER
+) #type: ignore
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle #type: ignore
+from reportlab.lib.pagesizes import letter #type: ignore
+from reportlab.lib.enums import TA_CENTER #type: ignore
 import os, time
 
 
