@@ -1,7 +1,7 @@
 import requests #type: ignore
 from celery import shared_task  # type: ignore
 from django.contrib.auth import get_user_model
-from service.models import ContractAnalysis
+from service.models import ContractAnalysis, LocationSuitability
 User = get_user_model()
 
 def make_agent_request(url: str, payload: dict) -> dict:
@@ -49,3 +49,18 @@ def make_file_request(url: str, file_path: str, contract_analysis_id: int):
         return {"error": f"Failed to update ContractAnalysis: {e}"}
 
     return {"success": True, "analysis_result": result}
+
+
+@shared_task(bind=True)
+def generate_location_request(self, url: str, payload: dict, location_suitability_id: int):
+    response = requests.post(url, json=payload, timeout=60)
+    response.raise_for_status()
+
+    data = response.json()
+
+    # Update DB after AI response
+    LocationSuitability.objects.filter(
+        id=location_suitability_id
+    ).update(analysis_summary=data)
+
+    return data

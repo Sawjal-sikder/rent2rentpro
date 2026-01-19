@@ -35,3 +35,23 @@ class ContractAnalysis(models.Model):
     
     def __str__(self):
         return f"Analysis for {self.contract_file.name} by {self.user.full_name}"
+    
+    
+class LocationSuitability(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    city_size = models.CharField(max_length=255)
+    district_type = models.CharField(max_length=255)
+    demand_profile = models.CharField(max_length=255)
+    public_transport = models.CharField(max_length=255)
+    supermarkets_restaurants = models.CharField(max_length=255)
+    universities_hospitals_offices = models.CharField(max_length=255)
+    local_demand = models.CharField(max_length=255)
+    competition_level = models.CharField(max_length=255)
+    short_term_prices = models.CharField(max_length=255)
+    regulatory_friendliness = models.CharField(max_length=255)
+    analysis_summary = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Suitability Report for {self.user.full_name}"
