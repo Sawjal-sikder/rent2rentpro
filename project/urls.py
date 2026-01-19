@@ -16,7 +16,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', lambda request: JsonResponse({
         "status": "success",
-        "service": "Welcome to Violet Backend API",
+        "service": "Welcome to rent2rent Backend API",
         "message": "Service is operational"
     })),
 
