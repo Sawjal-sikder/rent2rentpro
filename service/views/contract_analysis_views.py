@@ -3,6 +3,7 @@ from service.models import ContractAnalysis
 from service.serializers.contract_analysis_serializers import ContractAnalysisSerializer
 from service.utils.agent_request import make_file_request
 import os
+from django.urls import reverse
 
 class ContractAnalysisView(generics.ListCreateAPIView):
     queryset = ContractAnalysis.objects.all()
@@ -37,6 +38,10 @@ class ContractAnalysisView(generics.ListCreateAPIView):
             file_path=contract_analysis.contract_file.path,  # File path on disk
             contract_analysis_id=contract_analysis.id
         )
+        
+        detail_url = request.build_absolute_uri(
+            reverse('contract-analysis-detail', kwargs={'pk': contract_analysis.id})
+        )
 
         # Return immediately (async processing)
         output_serializer = self.get_serializer(contract_analysis)
@@ -44,7 +49,17 @@ class ContractAnalysisView(generics.ListCreateAPIView):
             {
                 **output_serializer.data,
                 "task_id": task.id,
-                "status": "processing"
+                "status": "processing",
+                "redirect_url": detail_url
             },
             status=status.HTTP_202_ACCEPTED
         )
+        
+        
+class ContractAnalysisDetailView(generics.RetrieveAPIView):
+    queryset = ContractAnalysis.objects.all()
+    serializer_class = ContractAnalysisSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
