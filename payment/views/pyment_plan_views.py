@@ -4,6 +4,7 @@ from payment.serializers.pyment_plan_serializers import PaymentPlanSerializer
 
 import os #type: ignore
 import stripe #type: ignore
+from rest_framework import status, response #type: ignore
 
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
@@ -162,41 +163,19 @@ class PaymentPlanUpdateView(generics.UpdateAPIView):
                 status=400
             )
             
-# class PaymentPlanDeleteView(generics.DestroyAPIView):
-#     """
-#     API view to delete a payment plan.
-#     """
-#     queryset = PaymentPlan.objects.all()
-#     serializer_class = PaymentPlanSerializer
-#     permission_classes = [permissions.IsAuthenticated]
+class PaymentPlanDeleteView(generics.DestroyAPIView):
+    """
+    API view to delete a payment plan.
+    """
+    queryset = PaymentPlan.objects.all()
+    serializer_class = PaymentPlanSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'pk'
 
-#     def destroy(self, request, *args, **kwargs):
-#         instance = self.get_object()
-        
-#         try:
-#             # Deactivate the Stripe Product
-#             stripe.Product.modify(
-#                 instance.stripe_product_id,
-#                 active=False
-#             )
-            
-#             # Optionally, you can also deactivate the Price
-#             stripe.Price.modify(
-#                 instance.stripe_price_id,
-#                 active=False
-#             )
-            
-#             # Delete from local database
-#             self.perform_destroy(instance)
-#             return response.Response(status=204)
-            
-#         except stripe.error.StripeError as e:
-#             return response.Response(
-#                 {"error": f"Stripe error: {str(e)}"},
-#                 status=400
-#             )
-#         except Exception as e:
-#             return response.Response(
-#                 {"error": str(e)},
-#                 status=400
-#             )
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return response.Response(
+            {"message": "Payment plan deleted successfully"},
+            status=status.HTTP_200_OK
+        )

@@ -33,7 +33,7 @@ class Subscription(models.Model):
     status = models.CharField(max_length=50, choices=CHOICES_STATUS, default='pending')
     trial_start = models.DateTimeField(blank=True, null=True)
     trial_end = models.DateTimeField(blank=True, null=True)
-    start_date = models.DateTimeField()
+    start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     
     auto_renew = models.BooleanField(default=True)
@@ -49,4 +49,4 @@ class Subscription(models.Model):
     @property
     def is_valid(self):
         """Check if subscription is currently valid"""
-        return self.status in ['active', 'trialing'] and self.end_date > timezone.now()
+        return self.status in ['active', 'trialing'] and self.end_date and self.end_date > timezone.now()
