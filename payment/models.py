@@ -21,7 +21,7 @@ class Subscription(models.Model):
     CHOICES_STATUS = [
         ('active', 'Active'),
         ('canceled', 'Canceled'),
-        ('pendding', 'Pendding'),
+        ('pending', 'Pending'),
         ('trialing', 'Trialing'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -29,7 +29,7 @@ class Subscription(models.Model):
     stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
     stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
     
-    status = models.CharField(max_length=50, choices=CHOICES_STATUS, default='pendding')
+    status = models.CharField(max_length=50, choices=CHOICES_STATUS, default='pending')
     trial_start = models.DateTimeField(blank=True, null=True)
     trial_end = models.DateTimeField(blank=True, null=True)
     start_date = models.DateTimeField()

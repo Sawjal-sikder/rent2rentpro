@@ -32,8 +32,12 @@ whitenoise
 # Security
 cryptography
 
+# payment processing
+stripe
+
 # Utilities
 jsonschema
 requests
 Pillow
 reportlab
+drf-spectacular

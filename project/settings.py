@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # dj-rest-auth
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'drf_spectacular',
 
     # other apps
     'user_profile',
@@ -297,3 +298,20 @@ CELERY_RESULT_SERIALIZER = 'json'
 USE_TZ = True
 TIME_ZONE = 'Asia/Dhaka'
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Product API',
+    'DESCRIPTION': 'API for rent2rentpro Application',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': False,
+    }
+}
