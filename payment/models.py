@@ -1,4 +1,5 @@
 from django.db import models #type: ignore
+from django.utils import timezone #type: ignore
 from django.contrib.auth import get_user_model #type: ignore
 User = get_user_model()
 
@@ -43,3 +44,9 @@ class Subscription(models.Model):
     
     def __str__(self):
         return f"{self.user.full_name} - {self.payment_plan.name}"
+    
+
+    @property
+    def is_valid(self):
+        """Check if subscription is currently valid"""
+        return self.status in ['active', 'trialing'] and self.end_date > timezone.now()
