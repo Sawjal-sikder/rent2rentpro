@@ -1,11 +1,9 @@
-from rest_framework import serializers # type: ignore
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer # type: ignore
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class UserLoginSerializer(TokenObtainPairSerializer):
-    username_field = 'email'
-
     def validate(self, attrs):
         data = super().validate(attrs)
+        
         return {
             "message": "Login successful",
             "user_details": {

@@ -30,7 +30,7 @@ class PaymentPlanCreateView(generics.CreateAPIView):
     """
     queryset = PaymentPlan.objects.all()
     serializer_class = PaymentPlanSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         name = request.data.get('name')
@@ -84,7 +84,7 @@ class PaymentPlanUpdateView(generics.UpdateAPIView):
     """
     queryset = PaymentPlan.objects.all()
     serializer_class = PaymentPlanSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
 
     def update(self, request, *args, **kwargs):
@@ -161,3 +161,42 @@ class PaymentPlanUpdateView(generics.UpdateAPIView):
                 {"error": str(e)},
                 status=400
             )
+            
+# class PaymentPlanDeleteView(generics.DestroyAPIView):
+#     """
+#     API view to delete a payment plan.
+#     """
+#     queryset = PaymentPlan.objects.all()
+#     serializer_class = PaymentPlanSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def destroy(self, request, *args, **kwargs):
+#         instance = self.get_object()
+        
+#         try:
+#             # Deactivate the Stripe Product
+#             stripe.Product.modify(
+#                 instance.stripe_product_id,
+#                 active=False
+#             )
+            
+#             # Optionally, you can also deactivate the Price
+#             stripe.Price.modify(
+#                 instance.stripe_price_id,
+#                 active=False
+#             )
+            
+#             # Delete from local database
+#             self.perform_destroy(instance)
+#             return response.Response(status=204)
+            
+#         except stripe.error.StripeError as e:
+#             return response.Response(
+#                 {"error": f"Stripe error: {str(e)}"},
+#                 status=400
+#             )
+#         except Exception as e:
+#             return response.Response(
+#                 {"error": str(e)},
+#                 status=400
+#             )
