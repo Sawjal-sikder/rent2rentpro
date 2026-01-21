@@ -1,3 +1,4 @@
+from payment.views.permission_views import HasActiveSubscription
 from rest_framework import generics, permissions, response, status # type: ignore
 from service.models import LocationSuitability
 from service.serializers.location_suitability_serilizers import LocationSuitabilitySerializer
@@ -5,7 +6,7 @@ from service.serializers.location_suitability_serilizers import LocationSuitabil
 class LocationSuitabilityView(generics.ListCreateAPIView):
     queryset = LocationSuitability.objects.all()
     serializer_class = LocationSuitabilitySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [HasActiveSubscription]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -22,7 +23,7 @@ class LocationSuitabilityView(generics.ListCreateAPIView):
 class LocationSuitabilityDetailView(generics.RetrieveAPIView):
     queryset = LocationSuitability.objects.all()
     serializer_class = LocationSuitabilitySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [HasActiveSubscription]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

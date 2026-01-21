@@ -1,14 +1,15 @@
+from payment.views.permission_views import HasActiveSubscription
 from rest_framework import generics, permissions, response, status #type: ignore
 from service.models import ContractAnalysis
 from service.serializers.contract_analysis_serializers import ContractAnalysisSerializer
 from service.utils.agent_request import make_file_request
 import os
-from django.urls import reverse
+from django.urls import reverse # type: ignore  
 
 class ContractAnalysisView(generics.ListCreateAPIView):
     queryset = ContractAnalysis.objects.all()
     serializer_class = ContractAnalysisSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [HasActiveSubscription]
     
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -59,7 +60,7 @@ class ContractAnalysisView(generics.ListCreateAPIView):
 class ContractAnalysisDetailView(generics.RetrieveAPIView):
     queryset = ContractAnalysis.objects.all()
     serializer_class = ContractAnalysisSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [HasActiveSubscription]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

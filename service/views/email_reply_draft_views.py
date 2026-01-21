@@ -1,3 +1,4 @@
+from payment.views.permission_views import HasActiveSubscription
 from rest_framework import generics, permissions, status, response #type: ignore
 from service.models import EmailReplyDraft
 from service.serializers.email_reply_draft_serializers import EmailReplyDraftSerializer
@@ -7,7 +8,7 @@ import os
 class EmailReplyDraftView(generics.ListCreateAPIView):
     queryset = EmailReplyDraft.objects.all()
     serializer_class = EmailReplyDraftSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [HasActiveSubscription]
     
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

@@ -1,9 +1,10 @@
+from payment.views.permission_views import HasActiveSubscription
 from service.serializers.contact_cration_serilizers import ContactCreationSerializer  # type: ignore
 from rest_framework import status, generics, permissions, response  # type: ignore
 
 class ContactCreationView(generics.CreateAPIView):
     serializer_class = ContactCreationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [HasActiveSubscription]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

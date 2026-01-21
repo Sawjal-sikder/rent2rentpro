@@ -14,7 +14,7 @@ class PaymentPlanAdmin(admin.ModelAdmin):
     
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'payment_plan', 'status', 'start_date', 'end_date', 'is_active', 'created_at', 'updated_at')
+    list_display = ('user', 'payment_plan', 'status', 'start_date', 'end_date', 'trial_start','trial_end', 'is_active')
     search_fields = ('user__username', 'user__email', 'payment_plan__name', 'stripe_customer_id', 'stripe_subscription_id')
     list_filter = ('status', 'is_active')
     ordering = ('-created_at',)
