@@ -5,6 +5,7 @@ from dashboard.views.administrators_views import (
     AdministratorsdetailView,
 )
 
+from dashboard.views.user_feedback_views import UserFeedbackView
 from dashboard.views.user_management_views import (
     UserManagementView,
     UserToggleActiveView,
@@ -24,4 +25,7 @@ urlpatterns = [
     
     # tenant management
     path('tenant-management/', TenantManagementView.as_view(), name='tenant-management'),
+    
+    # user feedback can be added here when needed
+    path('user-feedback/', UserFeedbackView.as_view(), name='user-feedback'),
 ]
