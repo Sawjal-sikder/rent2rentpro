@@ -32,6 +32,9 @@ class ContractAnalysisView(generics.ListCreateAPIView):
             contract_file=contract_file,
             contract_analysis_result={}  # Empty for now
         )
+        
+        print("-----------------------------------------------------")
+        print(f"url: {os.getenv('BASE_URL_AI_SERVICE') + '/ai/analyze_file'}")
 
         # Pass the file path to Celery task
         task = make_file_request.delay(

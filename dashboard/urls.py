@@ -1,11 +1,13 @@
 from django.urls import path # type: ignore
+from dashboard.views.instraction_analysis_views import InstractionAnalysisView, InstractionAnalysisUpdateView
+from dashboard.views.dashboard_views import DashboardView, UserInsightsView
+from dashboard.views.user_feedback_views import UserFeedbackView
+
 from dashboard.views.administrators_views import (
     AdministratorsView,
     AdministratorsCreateView,
     AdministratorsdetailView,
 )
-
-from dashboard.views.user_feedback_views import UserFeedbackView
 from dashboard.views.user_management_views import (
     UserManagementView,
     UserToggleActiveView,
@@ -28,4 +30,11 @@ urlpatterns = [
     
     # user feedback can be added here when needed
     path('user-feedback/', UserFeedbackView.as_view(), name='user-feedback'),
+    
+    # dashboard/urls.py
+    path('overview/', DashboardView.as_view(), name='dashboard-overview'),
+    path('user-insights/', UserInsightsView.as_view(), name='user-insights'),
+    path('analysis-rules/', InstractionAnalysisView.as_view(), name='analysis-rules'),
+    path('analysis-rules/update/', InstractionAnalysisUpdateView.as_view(), name='analysis-rules-update'),
+    
 ]

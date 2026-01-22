@@ -55,3 +55,16 @@ class LocationSuitability(models.Model):
     
     def __str__(self):
         return f"Suitability Report for {self.user.full_name}"
+    
+    
+
+class InstractionAnalysis(models.Model):
+    rules_contract_createion = models.TextField()
+    rules_email_reply = models.TextField()
+    rules_location_suitability = models.TextField()
+    rules_contract_analysis = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return "Instruction Analysis Settings"

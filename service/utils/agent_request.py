@@ -1,6 +1,6 @@
 import requests #type: ignore
 from celery import shared_task  # type: ignore
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model # type: ignore
 from service.models import ContractAnalysis, LocationSuitability
 User = get_user_model()
 
@@ -12,8 +12,8 @@ def make_agent_request(url: str, payload: dict) -> dict:
     try:
         response = requests.post(url, json=payload)
         response.raise_for_status()
-        # print(response.json())
-        # print("-------------------------------------------------------------------")
+        print(response.json())
+        print("-------------------------------------------------------------------")
         return response.json()
     except requests.RequestException as e:
         # Log the error or handle it as needed
@@ -33,6 +33,8 @@ def make_file_request(url: str, file_path: str, contract_analysis_id: int):
             response = requests.post(url, files=files)
             response.raise_for_status()
             result = response.json()
+            print("AI Service Response:", result)
+            print("-----------------------------------------------------")
     except requests.RequestException as e:
         # Update the ContractAnalysis with error
         ContractAnalysis.objects.filter(id=contract_analysis_id).update(
