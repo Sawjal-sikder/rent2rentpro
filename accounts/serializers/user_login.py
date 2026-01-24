@@ -15,6 +15,7 @@ class UserLoginSerializer(TokenObtainPairSerializer):
                 "phone_number": self.user.phone_number,
                 "is_premium": self.check_premium_status(self.user),
                 "user_role": self.get_user_role(self.user),
+                "user_type": self.user.user_type,
             },
             "refresh": data['refresh'],
             "access": data['access'],

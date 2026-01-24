@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model # type: ignore
 User = get_user_model()
 
 class ContactCreationFile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     file = models.FileField(upload_to='contracts/')
     created_at = models.DateTimeField(auto_now_add=True)

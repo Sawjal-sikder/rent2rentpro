@@ -1,5 +1,8 @@
-from rest_framework import serializers #type: ignore
-from service.utils.contact_creation_generate_pdf import generate_pdf  # type: ignore
+import os
+from rest_framework import serializers
+from service.models import ContactCreationFile
+from service.utils.contact_creation_generate_pdf import generate_pdf
+from django.core.files.base import ContentFile
 
 class ContactCreationSerializer(serializers.Serializer):
     contact_type = serializers.ChoiceField(choices=[
@@ -31,6 +34,34 @@ class ContactCreationSerializer(serializers.Serializer):
     contract_limitation_details = serializers.CharField(max_length=255, required=False, allow_blank=True)
 
     def create(self, validated_data):
+        # Get user from context
+        user = self.context['request'].user
+        
+        # Generate the PDF file
         pdf_path = generate_pdf(validated_data)
+        
+        # Create a title for the contract
+        title = f"{validated_data['contact_type']}_Contract_{validated_data['tenant_name']}_{validated_data['rent_start_date']}"
+        
+        # Read the PDF file
+        with open(pdf_path, 'rb') as pdf_file:
+            pdf_content = pdf_file.read()
+        
+        # Create ContactCreationFile instance with user
+        contact_file = ContactCreationFile.objects.create(
+            user=user,  # Add the user here
+            title=title,
+            file=ContentFile(pdf_content, name=os.path.basename(pdf_path))
+        )
+        
+        # Add both pdf_path and contact_file to validated_data
+        validated_data["contact_file"] = contact_file
         validated_data["pdf_path"] = pdf_path
+        
         return validated_data
+
+
+class ContactCreationFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactCreationFile
+        fields = ['id', 'title', 'file', 'created_at', 'updated_at']
