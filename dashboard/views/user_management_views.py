@@ -41,3 +41,21 @@ class UserToggleActiveView(generics.RetrieveUpdateDestroyAPIView):
         return response.Response({
                 "message": "User deleted successfully"
         }, status=status.HTTP_204_NO_CONTENT)
+        
+        
+        
+class UserUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [permissions.IsAdminUser]
+    serializer_class = UserManagementSerializer
+    lookup_field = 'id'
+    
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response({
+                "message": "User updated successfully", 
+                "user": serializer.data
+        })

@@ -11,6 +11,7 @@ from dashboard.views.administrators_views import (
 from dashboard.views.user_management_views import (
     UserManagementView,
     UserToggleActiveView,
+    UserUpdateView,
 )
 from dashboard.views.tenant_management_views import (
     TenantManagementView,
@@ -19,6 +20,7 @@ from dashboard.views.tenant_management_views import (
 urlpatterns = [
     path('user-management/', UserManagementView.as_view(), name='user-management'),
     path('user-management/toggle-active/<int:id>/', UserToggleActiveView.as_view(), name='user-toggle-active'),
+    path('user-management/<int:id>/', UserUpdateView.as_view(), name='user-update'),
     
     # administrators view can be added here when needed
     path('administrators/', AdministratorsView.as_view(), name='administrators'),
