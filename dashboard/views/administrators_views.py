@@ -17,21 +17,20 @@ class AdministratorsCreateView(generics.CreateAPIView):
     serializer_class = AdministratorsSerializer
     
     def perform_create(self, serializer):
-        password = serializer.validated_data.get('password')
-        role = serializer.validated_data.get('role', 'admin').lower()
+        password = serializer.validated_data.pop('password', None)
+        role = serializer.validated_data.pop('role', 'admin').lower()
         
         if role not in ['admin', 'superadmin']:
             role = 'admin' 
         
         instance = serializer.save(
             is_staff=True,
-            is_superuser=(role == 'superadmin')
+            is_superuser=(role == 'superadmin')  # True only for superadmin, False for admin
         )
             
         if password:
             instance.set_password(password)
             instance.save(update_fields=['password'])
-            
             
             
 class AdministratorsdetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -41,17 +40,20 @@ class AdministratorsdetailView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
     
     def perform_update(self, serializer):
-        password = serializer.validated_data.get('password')
-        role = serializer.validated_data.get('role', 'admin').lower()
+        password = serializer.validated_data.pop('password', None)
+        role = serializer.validated_data.pop('role', '').lower()
         
-        if role not in ['admin', 'superadmin']:
-            role = 'admin' 
+        # Prepare update data
+        update_data = {'is_staff': True}
         
-        instance = serializer.save(
-            is_staff=True,
-            is_superuser=(role == 'superadmin')
-        )
+        if role == 'superadmin':
+            update_data['is_superuser'] = True
+        elif role == 'admin':
+            update_data['is_superuser'] = False
+        
+        instance = serializer.save(**update_data)
             
+        # Handle password update
         if password:
             instance.set_password(password)
             instance.save(update_fields=['password'])
